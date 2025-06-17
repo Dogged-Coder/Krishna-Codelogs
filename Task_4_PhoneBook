@@ -1,0 +1,15 @@
+import colorama
+from colorama import Fore
+colorama.init()
+entries=int(input("How many number of entries?"))
+name=[]
+phone=[]
+for i in range(entries):
+   name.append(input(f"Enter the name {i+1}"))
+   phone.append(int(input(f"Enter the phone number of {name[i]}")))
+
+print(f"\033[1m{Fore.BLUE}__________________PHONE___BOOK______________\033[0m")
+print(f"{Fore.RED}     NAME              ||      PHONE NUMBER")
+print(f"{Fore.BLACK}___________________________________________________________")
+for i in range(entries):
+   print(f"{Fore.BLACK}{i+1}...",f"{Fore.GREEN}{name[i].ljust(20)}📞",f"{Fore.YELLOW}{phone[i]}")
