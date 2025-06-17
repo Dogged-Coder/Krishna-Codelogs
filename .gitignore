@@ -1,0 +1,14 @@
+# Ignore Python environments
+aircommand_env/
+venv/
+env/
+
+# Bytecode and caches
+__pycache__/
+*.pyc
+
+# Heavy binary files
+*.pyd
+*.dll
+*.exe
+*.log
