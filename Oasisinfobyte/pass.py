@@ -18,7 +18,7 @@ app.resizable(False, False)
 
 # Load and animate background GIF
 frames = []
-bg_gif = Image.open("background.gif")
+bg_gif = Image.open("Oasisinfobyte/background.gif")
 for frame in ImageSequence.Iterator(bg_gif):
     frame = frame.resize((600, 360))
     frames.append(ImageTk.PhotoImage(frame))
