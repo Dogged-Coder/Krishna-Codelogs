@@ -1,111 +1,86 @@
 import customtkinter as ctk
-from tkinter import Canvas, PhotoImage
-from PIL import Image, ImageTk, ImageSequence
 
-# App Setup
+# App setup
 ctk.set_appearance_mode("light")
-ctk.set_default_color_theme("blue")
+ctk.set_default_color_theme("green")  # green theme to match your vibe
 
 app = ctk.CTk()
-app.geometry("450x600")
-app.title("GIF Styled Calculator")
+app.geometry("300x450")
+app.title("Green Glow Calculator")
 app.resizable(False, False)
 
-# Canvas for GIF Background
-canvas = Canvas(app, width=450, height=450, highlightthickness=0)
-canvas.place(x=0, y=0)
+expression = ""
 
-# Load GIF frames using PIL
-gif = Image.open("back.gif")
-gif_frames = [ImageTk.PhotoImage(frame.copy().resize((450, 450))) for frame in ImageSequence.Iterator(gif)]
-frame_index = 0
+# --- Display ---
+display = ctk.CTkEntry(app, font=("Consolas", 22), justify="right", width=260, height=50)
+display.place(x=20, y=20)
+display.insert(0, "0")
+display.configure(state="readonly")
 
-def animate():
-    global frame_index
-    canvas.create_image(0, 0, anchor="nw", image=gif_frames[frame_index])
-    frame_index = (frame_index + 1) % len(gif_frames)
-    app.after(100, animate)
-
-animate()
-
-# --- Cover the Digital Display Area on GIF ---
-cover = ctk.CTkFrame(app, width=190, height=60, fg_color="white")
-cover.place(x=130, y=30)
-
-# --- Calculator Display ---
-current_expression = ""
-entry = ctk.CTkEntry(app, font=("Consolas", 20), justify="right", width=180)
-entry.place(x=135, y=40)
-entry.insert(0, "0")
-entry.configure(state="readonly")
-
-# --- Calculator Logic ---
-def press(value):
-    global current_expression
-    if entry.get() == "0":
-        current_expression = value
+# --- Logic ---
+def update_display(value):
+    global expression
+    if display.get() == "0":
+        expression = value
     else:
-        current_expression += value
-    entry.configure(state="normal")
-    entry.delete(0, ctk.END)
-    entry.insert(0, current_expression)
-    entry.configure(state="readonly")
+        expression += value
+    display.configure(state="normal")
+    display.delete(0, ctk.END)
+    display.insert(0, expression)
+    display.configure(state="readonly")
 
 def clear():
-    global current_expression
-    current_expression = ""
-    entry.configure(state="normal")
-    entry.delete(0, ctk.END)
-    entry.insert(0, "0")
-    entry.configure(state="readonly")
+    global expression
+    expression = ""
+    display.configure(state="normal")
+    display.delete(0, ctk.END)
+    display.insert(0, "0")
+    display.configure(state="readonly")
 
 def calculate():
-    global current_expression
+    global expression
     try:
-        result = str(eval(current_expression))
-        entry.configure(state="normal")
-        entry.delete(0, ctk.END)
-        entry.insert(0, result)
-        entry.configure(state="readonly")
-        current_expression = result
+        result = str(eval(expression))
+        display.configure(state="normal")
+        display.delete(0, ctk.END)
+        display.insert(0, result)
+        display.configure(state="readonly")
+        expression = result
     except:
-        entry.configure(state="normal")
-        entry.delete(0, ctk.END)
-        entry.insert(0, "Error")
-        entry.configure(state="readonly")
-        current_expression = ""
+        display.configure(state="normal")
+        display.delete(0, ctk.END)
+        display.insert(0, "Error")
+        display.configure(state="readonly")
+        expression = ""
 
-# --- Buttons Below the GIF (same layout as shown in gif) ---
-button_cfg = dict(width=80, height=50, corner_radius=10, fg_color="#eeeeee", hover_color="#cccccc")
-
-x_start, y_start = 50, 470
-spacing_x, spacing_y = 90, 60
-
+# --- Buttons ---
 buttons = [
-    ("7", x_start, y_start),
-    ("8", x_start + spacing_x, y_start),
-    ("9", x_start + 2*spacing_x, y_start),
-
-    ("4", x_start, y_start + spacing_y),
-    ("5", x_start + spacing_x, y_start + spacing_y),
-    ("6", x_start + 2*spacing_x, y_start + spacing_y),
-
-    ("1", x_start, y_start + 2*spacing_y),
-    ("2", x_start + spacing_x, y_start + 2*spacing_y),
-    ("3", x_start + 2*spacing_x, y_start + 2*spacing_y),
-
-    ("0", x_start, y_start + 3*spacing_y),
-    ("C", x_start + spacing_x, y_start + 3*spacing_y),
-    ("=", x_start + 2*spacing_x, y_start + 3*spacing_y),
+    ("7", 20, 90), ("8", 90, 90), ("9", 160, 90), ("/", 230, 90),
+    ("4", 20, 150), ("5", 90, 150), ("6", 160, 150), ("*", 230, 150),
+    ("1", 20, 210), ("2", 90, 210), ("3", 160, 210), ("-", 230, 210),
+    ("0", 20, 270), ("C", 90, 270), ("=", 160, 270), ("+", 230, 270),
 ]
 
-for txt, x, y in buttons:
-    if txt == "C":
+for (text, x, y) in buttons:
+    if text == "C":
         cmd = clear
-    elif txt == "=":
+    elif text == "=":
         cmd = calculate
     else:
-        cmd = lambda val=txt: press(val)
-    ctk.CTkButton(app, text=txt, command=cmd, **button_cfg).place(x=x, y=y)
+        cmd = lambda val=text: update_display(val)
+
+    ctk.CTkButton(
+        app,
+        text=text,
+        command=cmd,
+        width=60,
+        height=50,
+        corner_radius=10,
+        fg_color="#b2f2bb",       # Light green
+        hover_color="#69db7c",    # Darker green on hover
+        border_width=2,
+        border_color="#2b8a3e",
+        text_color="black"
+    ).place(x=x, y=y)
 
 app.mainloop()
